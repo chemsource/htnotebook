@@ -536,7 +536,7 @@
                             <span>数组栈的创建</span>
                             <button class="copy-btn">复制代码</button>
                         </div>
-int sta[N]; //开辟数组栈，N是栈最大的大小
+int sta[N]; //开辟数组栈，N是栈最大的大小<br/>
 int top=0; //使用变量记录栈顶位置
                     </div>
                     <p>操作数组栈</p>
@@ -545,30 +545,30 @@ int top=0; //使用变量记录栈顶位置
                             <span>数组栈的操作，注意：错误码按照自己的习惯更改</span>
                             <button class="copy-btn">复制代码</button>
                         </div>
-//入栈
-if(top == N - 1) //栈已满
-{
-&ensp;&ensp;return 0x3f3f3f01; //返回错误码
-}
-else{
-&ensp;&ensp;sta[++top] = x; //入栈
-}
-//出栈
-if(top == 0) //空栈
-{
-&ensp;&ensp;return 0x3f3f3f02; //返回错误码
-}
-else{
-&ensp;&ensp;--top;//出栈
-}
-//询问栈顶元素
-if(top == 0) //空栈
-{
-&ensp;&ensp;return 0x3f3f3f03; //返回错误码
-}
-else{
-&ensp;&ensp;return sta[top];//返回栈顶元素
-}
+//入栈<br/>
+if(top == N - 1) //栈已满<br/>
+{<br/>
+&ensp;&ensp;return 0x3f3f3f01; //返回错误码<br/>
+}<br/>
+else{<br/>
+&ensp;&ensp;sta[++top] = x; //入栈<br/>
+}<br/>
+//出栈<br/>
+if(top == 0) //空栈<br/>
+{<br/>
+&ensp;&ensp;return 0x3f3f3f02; //返回错误码<br/>
+}<br/>
+else{<br/>
+&ensp;&ensp;--top;//出栈<br/>
+}<br/>
+//询问栈顶元素<br/>
+if(top == 0) //空栈<br/>
+{<br/>
+&ensp;&ensp;return 0x3f3f3f03; //返回错误码<br/>
+}<br/>
+else{<br/>
+&ensp;&ensp;return sta[top];//返回栈顶元素<br/>
+}<br/>
                     </div>
                     <h3>STL中的栈容器（stack）</h3>
                     <p>特点：简单易用，好记</p><br/>
