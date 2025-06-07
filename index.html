@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核桃笔记本</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --border-radius: 12px;
+            --shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6f0fa 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(120deg, white 0%, #f8fbff 100%);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        
+        /* 搜索区域样式 */
+        .search-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .search-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .search-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        
+        .search-box-container {
+            position: relative;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 16px 25px 16px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.2rem;
+        }
+        
+        .search-hint {
+            text-align: center;
+            margin-top: 15px;
+            color: #718096;
+            font-size: 0.95rem;
+        }
+        
+        .search-hint i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+        
+        /* 主要内容布局 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+        
+        /* 侧边栏目录 */
+        .sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar h2 i {
+            margin-right: 12px;
+            background: rgba(67, 97, 238, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .course-list {
+            list-style: none;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .course-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .course-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .course-list::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        
+        .course-list li {
+            margin-bottom: 12px;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .course-list a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+            background: #f9fafc;
+            border-left: 4px solid transparent;
+        }
+        
+        .course-list a:hover {
+            background-color: #f0f5ff;
+            color: var(--primary-color);
+            transform: translateX(5px);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .course-list a.active {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), transparent);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .course-list i {
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+        
+        .course-title {
+            flex: 1;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-size: 1.1rem;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 20px;
+            color: #cbd5e0;
+        }
+        
+        /* 笔记内容区域 */
+        .notes-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+        }
+        
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .notes-header h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .notes-header h2 i {
+            margin-right: 12px;
+            color: var(--accent-color);
+        }
+        
+        .date {
+            color: #6c757d;
+            font-size: 1rem;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .note-content {
+            line-height: 1.8;
+        }
+        
+        .note-content h3 {
+            color: var(--secondary-color);
+            margin: 30px 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #eaeaea;
+        }
+        
+        .note-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.05rem;
+        }
+        
+        .note-content ul, .note-content ol {
+            margin-left: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .note-content li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        
+        .code-block {
+            background: #2b2d3a;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+        
+        .important {
+            background: linear-gradient(90deg, #fff9db, #fff4cc);
+            border-left: 4px solid #ffd43b;
+            padding: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 25px 0;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #6c757d;
+            font-size: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            h1 {
+                font-size: 2.4rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .notes-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .date {
+                margin-top: 15px;
+            }
+            
+            .search-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .search-container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book-open"></i> 核桃笔记本</h1>
+            <p class="subtitle">记录学习过程中的知识点、代码片段和重要概念</p>
+        </header>
+        
+        <div class="search-container">
+            <div class="search-header">
+                <h2><i class="fas fa-search"></i> 搜索课程</h2>
+                <div class="results-count">找到 <span id="count">8</span> 门课程</div>
+            </div>
+            
+            <div class="search-box-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" id="searchInput" placeholder="输入课程名称搜索...">
+            </div>
+            <p class="search-hint"><i class="fas fa-lightbulb"></i> 提示: 搜索支持部分匹配，不区分大小写</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- 侧边栏目录 -->
+            <aside class="sidebar">
+                <h2><i class="fas fa-list"></i> 课程目录</h2>
+                <ul class="course-list" id="courseList">
+                    <li>
+                        <a href="index.html" class="active">
+                            <i class="fas fa-home"></i>
+                            <span class="course-title">首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="class/html-basics.html">
+                            <i class="fab fa-a301"></i>
+                            <span class="course-title">A3-01 栈</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            
+            <!-- 笔记内容区域 -->
+            <main class="notes-container">
+                <div class="notes-header">
+                    <h2><i class="fas fa-home"></i> 欢迎使用学习笔记本</h2>
+                    <div class="date">2025年6月7日</div>
+                </div>
+                
+                <div class="note-content">
+                    <p>这是一个静态HTML笔记本网站，用于组织和展示不同课程的学习笔记。左侧目录列出了所有课程笔记的链接，点击即可查看具体内容。</p>
+                    
+                    <h3>网站特点</h3>
+                    <ul>
+                        <li><strong>清晰的课程目录结构</strong> - 使用卡片式布局展示所有课程</li>
+                        <li><strong>实时搜索功能</strong> - 在顶部搜索框中输入课程名称进行过滤</li>
+                        <li><strong>响应式设计</strong> - 在手机、平板和桌面设备上均有良好体验</li>
+                        <li><strong>简洁美观的用户界面</strong> - 使用现代化设计语言</li>
+                        <li><strong>代码高亮显示</strong> - 清晰地展示编程示例</li>
+                    </ul>
+                    
+                    <h3>使用说明</h3>
+                    <p>要查看特定课程的笔记，您可以通过两种方式：</p>
+                    <ol>
+                        <li>在左侧目录中直接点击相应的课程链接</li>
+                        <li>在顶部搜索框中输入课程名称（如"A3-01"、"栈"等）进行筛选</li>
+                    </ol>
+                    
+                    <div class="important">
+                        <p><strong>搜索功能说明：</strong> 搜索功能会实时过滤课程目录，仅显示匹配的课程。搜索不区分大小写，并支持部分匹配（例如输入"a3-01"可以匹配到"A3-01 栈"）。</p>
+                    </div>
+                    
+                    <h3>示例笔记内容</h3>
+                    <p>下面是C++基础课程的一个简单示例：</p>
+                    
+                    <div class="code-block">
+&#35;include&lt;iostream&gt;
+using namespace std;
+int main&#40;&#41;{
+&ensp;&ensp;cout &lt;&lt; "Hello,World!";
+&ensp;&ensp;return 0;
+} 
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <p>© 2025 笔记本 | 使用HTML, CSS和JavaScript构建 | 最后更新: 2025年6月7日</p>
+        </footer>
+    </div>
+
+    <script>
+        // 课程搜索功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const courseList = document.getElementById('courseList');
+            const courseItems = courseList.querySelectorAll('li');
+            const resultsCount = document.getElementById('count');
+            
+            // 首页项不参与搜索
+            const homepageItem = courseItems[0];
+            
+            // 初始课程数量（排除首页）
+            resultsCount.textContent = courseItems.length - 1;
+            
+            // 搜索功能
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let visibleCount = 0;
+                
+                // 始终显示首页项
+                homepageItem.style.display = 'block';
+                
+                // 遍历课程项（从索引1开始，跳过首页）
+                for (let i = 1; i < courseItems.length; i++) {
+                    const item = courseItems[i];
+                    const courseTitle = item.querySelector('.course-title').textContent.toLowerCase();
+                    
+                    if (courseTitle.includes(searchTerm)) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+                
+                // 更新结果计数
+                resultsCount.textContent = visibleCount;
+                
+                // 显示无结果提示
+                if (visibleCount === 0 && searchTerm.length > 0) {
+                    if (!document.querySelector('.no-results')) {
+                        const noResults = document.createElement('div');
+                        noResults.className = 'no-results';
+                        noResults.innerHTML = '<i class="fas fa-file-excel"></i><p>没有找到匹配的课程<br>请尝试其他关键词</p>';
+                        courseList.appendChild(noResults);
+                    }
+                } else {
+                    const noResults = document.querySelector('.no-results');
+                    if (noResults) {
+                        noResults.remove();
+                    }
+                }
+            });
+            
+            // 为目录项添加悬停效果
+            const courseLinks = document.querySelectorAll('.course-list a');
+            courseLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
