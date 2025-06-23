@@ -902,7 +902,7 @@ else{<br/>
                 
                 //如果要使用XML验证，替换上面的if语句为：
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'invite_codes.xml', true);
+                xhr.open('GET', '../invite_codes.xml', true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
