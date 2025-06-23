@@ -933,33 +933,34 @@ else{<br/>
                 };
                 xhr.send();
             });
-        // 复制代码功能
-        document.querySelectorAll('.copy-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const codeBlock = this.closest('.code-block');
-                const code = codeBlock.querySelector('pre') ? codeBlock.querySelector('pre').innerText : 
-                            codeBlock.innerText.replace(/复制代码/g, '').trim();
-                
-                navigator.clipboard.writeText(code).then(() => {
-                    const originalText = this.textContent;
-                    this.textContent = '已复制!';
+            // 复制代码功能
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const codeBlock = this.closest('.code-block');
+                    const code = codeBlock.querySelector('pre') ? codeBlock.querySelector('pre').innerText : 
+                                codeBlock.innerText.replace(/复制代码/g, '').trim();
                     
-                    setTimeout(() => {
-                        this.textContent = originalText;
-                    }, 2000);
+                    navigator.clipboard.writeText(code).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = '已复制!';
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                        }, 2000);
+                    });
                 });
             });
-        });
-        
-        // 为目录项添加悬停效果
-        const courseLinks = document.querySelectorAll('.course-list a');
-        courseLinks.forEach(link => {
-            link.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateX(5px)';
-            });
             
-            link.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateX(0)';
+            // 为目录项添加悬停效果
+            const courseLinks = document.querySelectorAll('.course-list a');
+            courseLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
             });
         });
     </script>
