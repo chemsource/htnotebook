@@ -1,0 +1,1170 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A3-04 树 - 核桃笔记本</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --border-radius: 12px;
+            --shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6f0fa 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(120deg, white 0%, #f8fbff 100%);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #718096;
+        }
+        
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            margin: 0 10px;
+        }
+        
+        /* 主要内容布局 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+        
+        /* 侧边栏目录 */
+        .sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar h2 i {
+            margin-right: 12px;
+            background: rgba(67, 97, 238, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .course-list {
+            list-style: none;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .course-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .course-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .course-list::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        
+        .course-list li {
+            margin-bottom: 12px;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .course-list a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+            background: #f9fafc;
+            border-left: 4px solid transparent;
+        }
+        
+        .course-list a:hover {
+            background-color: #f0f5ff;
+            color: var(--primary-color);
+            transform: translateX(5px);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .course-list a.active {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), transparent);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .course-list i {
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+        
+        .course-title {
+            flex: 1;
+        }
+        
+        /* 笔记内容区域 */
+        .notes-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+        }
+        
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .notes-header h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .notes-header h2 i {
+            margin-right: 12px;
+            color: var(--accent-color);
+        }
+        
+        .date {
+            color: #6c757d;
+            font-size: 1rem;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .course-info {
+            display: flex;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .info-card h3 {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .info-card p {
+            color: #4a5568;
+        }
+        
+        .note-content {
+            line-height: 1.8;
+        }
+        
+        .note-content h3 {
+            color: var(--secondary-color);
+            margin: 30px 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #eaeaea;
+            position: relative;
+        }
+        
+        .note-content h3::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: var(--accent-color);
+        }
+        
+        .note-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.05rem;
+        }
+        
+        .note-content ul, .note-content ol {
+            margin-left: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .note-content li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .note-content li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+        .code-block {
+            background: #2b2d3a;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+            font-size: 1rem;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            color: #a9b7c6;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #a9b7c6;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .copy-btn:hover {
+            color: white;
+        }
+        
+        .important {
+            background: linear-gradient(90deg, #fff9db, #fff4cc);
+            border-left: 4px solid #ffd43b;
+            padding: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 25px 0;
+            position: relative;
+        }
+        
+        .important::before {
+            content: "!";
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 30px;
+            height: 30px;
+            background: #ffd43b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #343a40;
+        }
+        
+        .important-content {
+            margin-left: 45px;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #6c757d;
+            font-size: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            h1 {
+                font-size: 2.4rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .notes-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .date {
+                margin-top: 15px;
+            }
+            
+            .course-info {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .notes-container {
+                padding: 20px;
+            }
+        }
+        a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+            background: #f9fafc;
+            border-left: 4px solid transparent;
+        }
+        
+        a:hover {
+            background-color: #f0f5ff;
+            color: var(--primary-color);
+            transform: translateX(5px);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        a.active {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), transparent);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* 新增登录模态框样式 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .login-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .login-modal.active .login-container {
+            transform: translateY(0);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #6c757d;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: var(--warning-color);
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .blur-content {
+            filter: blur(5px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        p.ans {
+            background-color: black;
+            color: black;
+            display: inline-block;
+            user-select: none;
+        }
+        p.ans:hover {
+            background-color: transparent;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录模态框 - 初始添加active类 -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-container">
+            <div class="login-header">
+                <h2><i class="fas fa-lock"></i> 访问授权</h2>
+                <p>请输入邀请码以访问笔记本内容</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="inviteCode">邀请码</label>
+                    <input type="text" id="inviteCode" class="form-control" placeholder="输入您的邀请码" required>
+                </div>
+                <button type="submit" class="btn">验证邀请码</button>
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> 邀请码无效，请重试
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book-open"></i> 核桃笔记本</h1>
+            <p class="subtitle">记录学习过程中的知识点、代码片段和重要概念</p>
+            <div class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <a href="a3-04.html">上一节 A3-04 树</a>
+                <a href="a3-06.html">下一节 A3-06 习题课-基本数据结构</a>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- 侧边栏目录 -->
+            <aside class="sidebar">
+                <h2><i class="fas fa-list"></i> 课程目录</h2>
+                <ul class="course-list" id="courseList">
+                    <li>
+                        <a href="../index.html">
+                            <i class="fas fa-home"></i>
+                            <span class="course-title">首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="a3-01.html">
+                            <i class="fab fa-bookmark"></i>
+                            <span class="course-title">A3-01 栈</span>
+                        </a>
+                    </li>
+                  <li>
+                        <a href="a3-02.html">
+                            <i class="fab fa-bookmark"></i>
+                            <span class="course-title">A3-02 队列</span>
+                        </a>
+                  </li>
+                  <li>
+                        <a href="a3-03.html">
+                            <i class="fab fa-bookmark"></i>
+                            <span class="course-title">A3-03 向量和链表</span>
+                        </a>
+                  </li>
+                  <li>
+                        <a href="a3-04.html">
+                            <i class="fab fa-bookmark"></i>
+                            <span class="course-title">A3-04 树</span>
+                        </a>
+                  </li>
+                  <li>
+                        <a href="a3-05.html" class="active">
+                            <i class="fab fa-book-open"></i>
+                            <span class="course-title">A3-05 图</span>
+                        </a>
+                  </li>
+                </ul>
+            </aside>
+            
+            <!-- 笔记内容区域 -->
+            <main class="notes-container">
+                <div class="notes-header">
+                    <h2><i class="fab fa-a301"></i> A3阶段 第五课 图</h2>
+                    <div class="date">2025年6月28日</div>
+                </div>
+                
+                <div class="course-info">
+                    <div class="info-card">
+                        <h3><i class="fas fa-clock"></i> 学习时长</h3>
+                        <p>约1.6小时</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-layer-group"></i> 难度</h3>
+                        <p>A3阶段/CSP-J</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-tags"></i> 标签</h3>
+                        <p>数据结构</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-user"></i> 讲师</h3>
+                        <p>王骏峣</p>
+                    </div>
+                </div>
+                
+                <div class="note-content">
+                    <h3>图</h3>
+                    <h4>概念</h4>
+                    <ol>
+                        <li>图由若干节点和若干节点之间的边构成</li>
+                        <li>边可能有方向（有向图），也有可能没有方向（无向图）</li>
+                        <li>边也可能带有权值(带权图)</li>
+                        <li>度数:无向图中,一个节点连边的条数称作这个节点的度数,有向图中,分为了入度和出度</li>
+                        <li>入度:将一个节点作为终点的边的条数称为这个节点的入度</li>
+                        <li>出度:将一个节点作为起点的边的条数称为这个节点的出度</li>
+                        <li>重边:两个节点之间不止一条边直接相连,那么就称为重边</li>
+                        <li>自环:一条边的起点和终点一样,造成自环<br/>
+                            &ensp;注：1.大多数情况:重边可合并,自环可忽略<br/>
+                            &ensp;&ensp;2.重边、自环可能有做题的作用</li>
+                    </ol>
+                    <p>图可以类比为我们生活中的地图,节点就是地点,边就是道路</p>
+                    <br/><p>方便起见,我们接下来用v和E分别表示一张图的点数和边数</p>
+                    <h4>图的存储</h4>
+                    <p>邻接矩阵</p>
+                    <p>使用一个大小为点集大小的二维数组M,其中M[1][j]记录节点i和节点之间边的信息<br/>
+                    &ensp;无权图:只保存两点之间是否有边<br/>
+                    &ensp;带权图:保存两点之间的边权<br/>
+                    &ensp;无向图:保存的矩阵通常对所有的i,j满足M[i][j]==M[j][i]</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>邻接矩阵</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+int M[N][N]; //邻接矩阵<br/>
+int main()<br/>
+{<br/>
+&nbsp;cin &gt;&gt; n &gt;&gt; m; //读入点数n、边数m<br/>
+&nbsp;for(int i = 1;i &lt;= m;i ++)<br/>
+&nbsp;{<br/>
+&nbsp;&nbsp;cin &gt;&gt; u &gt;&gt; v;//读入无向边&lt;u,v&gt;<br/>
+&nbsp;&nbsp;M[u][v] = M[v][u] = 1;<br/>
+&nbsp;}<br/>
+}
+                    </div>
+                    <p>邻接表</p>
+                    <div class="important">
+                        <div class="important-content">
+                            邻接矩阵有一个很大的问题是需要v<sup>2</sup>的空间,且需要O(v)的时间找到一个节点的所有出边,这对于稀疏图(E&lt;&lt;V<sup>2</sup>)来说非常浪费 
+                        </div>
+                    </div>
+                    <p>因此引入邻接表存图,定义vector&lt;int&gt;e其中e[u]保存所有以为端点的边,如果是有向图,则保留以u为起点的边</p>
+                    <p>无向无权图</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>邻接表</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+vector&lt;int&gt;e[N]; //邻接表<br/>
+int main()<br/>
+{<br/>
+&nbsp;cin &gt;&gt; n &gt;&gt; m; //读入点数n、边数m<br/>
+&nbsp;for(int i = 1;i &lt;= m;i ++)<br/>
+&nbsp;{<br/>
+&nbsp;&nbsp;cin &gt;&gt; u &gt;&gt; v;//读入无向边&lt;u,v&gt;<br/>
+&nbsp;&nbsp;e[u].push_back(v);<br/>
+&nbsp;&nbsp;e[v].push_back(u);<br/>
+&nbsp;}<br/>
+}
+                    </div>
+                    <p>无向有权图</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>邻接表</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+vector&lt;pair&lt;int,int&gt;&gt;e[N]; //邻接表<br/>
+int main()<br/>
+{<br/>
+&nbsp;cin &gt;&gt; n &gt;&gt; m; //读入点数n、边数m<br/>
+&nbsp;for(int i = 1;i &lt;= m;i ++)<br/>
+&nbsp;{<br/>
+&nbsp;&nbsp;cin &gt;&gt; u &gt;&gt; v &gt;&gt; k;//读入无向边&lt;u,v&gt;<br/>
+&nbsp;&nbsp;e[u].push_back({v,k});<br/>
+&nbsp;&nbsp;e[v].push_back({u,k});<br/>
+&nbsp;}<br/>
+}
+                    </div>
+                    <p>链式前向星</p>
+                    <p>用链表维护邻接表,具体来说,是用n个单链表来取代vector数组,了解即可,对代码实现不做要求</p>
+                    <h4>总结</h4>
+                    <p>图的存储大部分情况下都使用邻接表,偶尔使用邻接矩阵</p>
+                    <h3>图的遍历</h3>
+                    <h4>深度优先遍历(dfs)</h4>
+                    <p>当访问到一个点时,递归访问它的所有出边指向的点中还没有被访问过的</p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>DFS</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+int vis[N];//vis[i]表示节点i是否被访问过<br/>
+vector&lt;int&gt;e[n];<br/>
+void dfs(int u){//当前正在访问节点u<br/>
+&nbsp;vis[u] = 1;<br/>
+&nbsp;for(int v : e[u]){<br/>
+&nbsp;&nbsp;if(vis[v] == 0) // 没有被访问过<br/>
+&nbsp;&nbsp;&nbsp;dfs(v);<br/>
+&nbsp;}<br/>
+}<br/>
+                    </div>
+                    <div class="important">
+                        <div class="important-content">
+                            <p>邻接表深度优先遍历时间复杂度为O(V+E)</p>
+                        </div>
+                    </div>
+                    <h4>第一题</h4>
+                    <a href="https://htoj.com.cn/cpp/oj/problem/detail?pid=22169439330816">前往</a>
+                    <p>
+                      <strong>解析：</strong><br/>
+                        <ol>
+                            <li>考虑从每个点出发进行一次深度优先遍历</li>
+                            <li>能访问到的点就是从该点出发能到达的点</li>
+                            <li>将其中编号最大的作为答案</li>
+                            <li>时间复杂度O(NM)</li>
+                            <li>反向建边转化为对一个点,求能到达它的编号最大的点</li>
+                            <li>贪心:按照节点n,节点n-1,节点n-2,…的顺序依次去进行dfs</li>
+                            <li>节点n能dfs到的点答案必然为n</li>
+                            <li>节点n-1进行dfs时,一旦发现当前节点被遍历过,则可以直接返回</li>
+                            <li>依次类推</li>
+                        </ol>
+                    </p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>例题1</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+#include &lt;bits/stdc++.h&gt;<br/>
+using namespace std;<br/>
+const int N = 100005;<br/>
+int n,m,k,s,t,ans[N];<br/>
+vector&lt;int&gt; e[N];<br/>
+void dfs(int u){<br/>
+&nbsp;for(int v:e[u])<br/>
+&nbsp;&nbsp;if(ans[v] == 0)<br/>
+&nbsp;&nbsp;&nbsp;ans[v] = ans[u],dfs(v);<br/>
+}<br/>
+int main(){<br/>
+&nbsp;cin &gt;&gt; n &gt;&gt; m;<br/>
+&nbsp;for(int i=1;i<= m;++i){<br/>
+&nbsp;&nbsp;cin &gt;&gt; s &gt;&gt; t;<br/>
+&nbsp;&nbsp;e[t].push_back(s);//反向建边<br/>
+&nbsp;}<br/>
+&nbsp;for(int i=n;i>= 1;--i)<br/>
+&nbsp;&nbsp;if(ans[i] == 0)<br/>
+&nbsp;&nbsp;&nbsp;ans[i] = i,dfs(i);<br/>
+&nbsp;for(int i=1;i<= n;++i)<br/>
+&nbsp;&nbsp;cout &lt;&lt; ans[i] &lt;&lt; " ";<br/>
+}
+                    </div>
+
+                    <h4>第二题</h4>
+                    <a href="https://htoj.com.cn/cpp/oj/problem/detail?pid=22169439333120">前往</a>
+                    <p>
+                      <strong>题意：</strong><br/>
+                        <ol>
+                            <li>给定n个点,每个点都恰好有一条出边,求图中的最小环</li>
+                            <li>环:从任意点出发绕一圈后回到自身</li>
+                            <li>n≤2*10<sup>5</sup></li>
+                            <li>丛每个结构的任意一个点出发,沿着边的方向前进,最后必定能找到这个环</li>
+                            <li>·给沿途的点编号,一县访问到一个曾经遍历过的点,则环长=两者编号的差值+1</li>
+                            <li>细节：每次初始编号=上一次的初始编号+2n</li>
+                        </ol>
+                    </p>
+                    <div class="important">
+                        <div class="important-content">
+                            <p>当一个点被访问过的时候,就尽可能想办法不再访问</p>
+                        </div>
+                    </div>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>例题2</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+#include &lt;bits/stdc++.h&gt;<br/>
+using namespace std;<br/>
+const int N = 200005;<br/>
+int n,m,k,s,t;<br/>
+long long vis[N],a[N],ans=0x3f3f3f3f;<br/>
+void dfs(int u){<br/>
+&nbsp;if (vis[a[u]])<br/>
+&nbsp;{//已访问更新答案<br/>
+&nbsp;&nbsp;ans = min(ans,vis[u] + 1 - vis[a[u]]);<br/>
+&nbsp;&nbsp;return;<br/>
+&nbsp;}<br/>
+&nbsp;vis[a[u]] = vis[u] + 1;<br/>
+&nbsp;dfs(a[u]);<br/>
+}<br/>
+int main(){<br/>
+&nbsp;cin &gt;&gt; n;<br/>
+&nbsp;for(int i=1;i<= m;++i)<br/>
+&nbsp;&nbsp;cin &gt;&gt; a[i];<br/>
+&nbsp;long long cnt = 1;<br/>
+&nbsp;for(int i=1;i<= n;++i)<br/>
+&nbsp;&nbsp;if(!vis[i])<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;vis[i] = cnt;<br/>
+&nbsp;&nbsp;&nbsp;cnt += 2 * n;<br/>
+&nbsp;&nbsp;&nbsp;dfs(i);<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;cout &lt;&lt; ans;<br/>
+}
+                    </div>
+
+                    <h4>第三题</h4>
+                    <a href="https://htoj.com.cn/cpp/oj/problem/detail?pid=22169439333504">前往</a>
+                    <p>
+                      <strong>题意：</strong><br/>
+                        <ol>
+                            <li>给定n个点m条边的无向图,选择尽量少的点满足对于任意一条边都恰好有一个端点被选择</li>
+                            <li>求选择的最少点数或者输出无解</li>
+                            <li>n≤10<sup>4</sup>,m≤10<sup>5</sup></li>
+                            <li>这样的图称为二分图,本题实际要求我们判断给出的图是否是二分图</li>
+                            <li>染色法</li>
+                            <li>使用dfs每次将同一个连通块内的元素都染上颜色</li>
+                            <li>如果产生冲突,则说明当前图不是二分图</li>
+                            <li>否则,选择的点的个数=min(颜色1的点个数,颜色2的点个数)</li>
+                            <li>注意:题目没有保证图连通,所以需要对多个连通块进行dfs,累加每个连通块的答案</li>
+                        </ol>
+                    </p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>例题3</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+#include&lt;bits/stdc++.h&gt;<br/>
+using namespace std;<br/>
+const int N = 100005;<br/>
+int n,m,k,s,t,col[N],num[3],ans,bo;<br/>
+vector&lt;int&gt; e[N];<br/>
+void dfs(int u){<br/>
+&nbsp;for(int v:e[u]){<br/>
+&nbsp;&nbsp;if(col[v]){<br/>
+&nbsp;&nbsp;&nbsp;if(col[v] == col[u])<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;bo = 1;<br/>
+&nbsp;&nbsp;&nbsp;continue;<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;dfs(v);<br/>
+&nbsp;}<br/>
+}<br/>
+int main(){<br/>
+&nbsp;cin >> n >> m;<br/>
+&nbsp;for(int i = 1;i <= m;i ++){<br/>
+&nbsp;&nbsp;cin >> s >> t;<br/>
+&nbsp;&nbsp;e[s].push_back(t);<br/>
+&nbsp;&nbsp;e[t].push_back(s);<br/>
+&nbsp;}<br/>
+&nbsp;for(int i = 1;i <= n;i ++){<br/>
+&nbsp;&nbsp;if(!col[i]){<br/>
+&nbsp;&nbsp;&nbsp;num[1] = 1;<br/>
+&nbsp;&nbsp;&nbsp;num[2] = 0;<br/>
+&nbsp;&nbsp;&nbsp;col[i] = 1;<br/>
+&nbsp;&nbsp;&nbsp;dfs(i);<br/>
+&nbsp;&nbsp;&nbsp;ans += min(num[1],num[2]);<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;}<br/>
+&nbsp;if(bo) cout << "Impossible";<br/>
+&nbsp;else cout << ans;<br/>
+}
+                    </div>
+                    <h4>二分图判定</h3>
+                    <ol>
+                        <li>二分图的染色法是图论中比较基础和重要的内容</li>
+                        <li>题意:给定一个无向图,要求把所有边标记方向,并使整张图中没有距离>=2的路径,问是否存在并输出方案。(n,m≤2*10<sup>5</sup>)</li>
+                        <li>如果一个点即作为入度点,又作为出度点,那么就非法了</li>
+                        <li>也就是说每个点要么是入度点,要么是出度点</li>
+                        <li>对于每条有向边,两个端点恰好一个是入度点,一个是出度点</li>
+                        <li>所以这道题目也是一个二分图判定问题</li>
+                        <li>例题：洛谷CF1144F</li>
+                    </ol>
+                    <h4>广度优先遍历（BFS）</h4>
+                    <ol>
+                        <li>初始队列里只包含起点。每次取出队头,然后将它的所有出边指向的所有点中仍未遍历过的加入队列</li>
+                        <li>对无权图,该遍历方式按照从起点的单源最短路递增访问所有点</li>
+                        <li>方法通常被用来在O(V+E)时间内求一个无权图上的单源最短路</li>
+                    </ol>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>广度优先遍历</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+queue&lt;int&gt; q;<br/>
+memset(d,0x3f,sizeof(d));<br/>
+d[1] = 0;q.push(1);<br/>
+while(!q.empty()){<br/>
+&nbsp;int u = q.front();<br/>
+&nbsp;q.pop();<br/>
+&nbsp;for(int v:e[u]){<br/>
+&nbsp;&nbsp;if(d[v] > d[u] + 1){<br/>
+&nbsp;&nbsp;&nbsp;d[v] = d[u] + 1;<br/>
+&nbsp;&nbsp;&nbsp;q.push(v);<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;}<br/>
+}
+                    </div>
+                    <div class="important">
+                        <div class="important-content">
+                            <p>使用邻接表存图,bfs时间复杂度为O(V+E)</p>
+                        </div>
+                    </div>
+
+                    <h4>第四题</h4>
+                    <a href="https://htoj.com.cn/cpp/oj/problem/detail?pid=22169439333760">前往</a>
+                    <p>
+                      <strong>解析：</strong><br/>
+                        <ol>
+                            <li>这道题目让我们计算节点1到其余点的最短路条数,而且是无权图</li>
+                            <li>BFS</li>
+                            <li>n≤10<sup>4</sup>,m≤10<sup>5</sup></li>
+                            <li>定义num[i]表示节点1到节点i的最短路条数</li>
+                            <li>初始num[1]=1</li>
+                        </ol>
+                    </p>
+                    <div class="code-block">
+                      <div class="code-header">
+                        <span>例题4</span>
+                        <button class="copy-btn">复制代码</button>
+                      </div>
+#include &lt;bits/stdc++.h&gt;<br/>
+#define ll long long<br/>
+using namespace std;<br/>
+const int N = 1000005;<br/>
+int n,m,k,s,t,d[N],num[N];<br/>
+vector&lt;int&gt; e[N];<br/>
+int main(){<br/>
+&nbsp;ios::sync_with_stdio(0);<br/>
+&nbsp;cin.tie(0);<br/>
+&nbsp;cout.tie(0);<br/>
+&nbsp;cin >>n>>m;<br/>
+&nbsp;for(int i=1;i<= m;++i){<br/>
+&nbsp;&nbsp;cin >> s >> t;<br/>
+&nbsp;&nbsp;e[s].push_back(t);<br/>
+&nbsp;&nbsp;e[t].push_back(s);<br/>
+&nbsp;}<br/>
+&nbsp;memset(d,0x3f,sizeof(d));<br/>
+&nbsp;queue&lt;int&gt; q;<br/>
+&nbsp;q.push(1);<br/>
+&nbsp;d[1]=0;<br/>
+&nbsp;num[1]=1;<br/>
+&nbsp;while (!q.empty()){<br/>
+&nbsp;&nbsp;int u = q.front();<br/>
+&nbsp;&nbsp;q.pop();<br/>
+&nbsp;&nbsp;for(int v:e[u]){<br/>
+&nbsp;&nbsp;&nbsp;if(d[v] > d[u] + 1){<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;d[v] = d[u] + 1;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;num[v] = num[u];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;q.push(v);<br/>
+&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;else if(d[v] == d[u] + 1){<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;num[v] = (num[v] + num[u]) % 100003;<br/>
+&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;}<br/>
+&nbsp;for(int i = 1; i <= n; ++i)cout << num[i] << endl;<br/>
+}
+                    </div>
+                    <h3>总结</h3>
+                    <ol>
+                        <li>图由若干个节点和若干个节点之间的边构成</li>
+                        <li>有向图,无向图</li>
+                        <li>带权图,无权图</li>
+                        <li>图的常用存储方式有邻接矩阵、邻接表</li>
+                        <li>图的遍历方式有深度优先遍历dfs、广度优先遍历bfs</li>
+                        <li>广度优先遍历按照从起点的单源最短路递增顺序访问所有点,常用来求无权图的单源最短路</li>
+                    </ol>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <p>© 2025 核桃笔记本 | A3-05 图 | 最后更新: 2025年7月5日</p>
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const loginModal = document.getElementById('loginModal');
+            const container = document.querySelector('.container'); // 改为选择.container类
+            const loginForm = document.getElementById('loginForm');
+            const inviteCodeInput = document.getElementById('inviteCode');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 检查是否已登录
+            const isLoggedIn = localStorage.getItem('notebookLoggedIn') === 'true';
+            
+            // 初始化显示状态
+            if (isLoggedIn) {
+                loginModal.classList.remove('active');
+                if(container) container.classList.remove('blur-content');
+            } else {
+                loginModal.classList.add('active');
+                if(container) container.classList.add('blur-content');
+            }
+            
+            // 登录表单提交
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const enteredCode = inviteCodeInput.value.trim();
+                
+                // 直接验证（简化版，实际使用XML验证）
+                /*
+                if(enteredCode === "123") {
+                    localStorage.setItem('notebookLoggedIn', 'true');
+                    loginModal.classList.remove('active');
+                    if(container) container.classList.remove('blur-content');
+                    
+                    // 清除状态
+                    errorMessage.style.display = 'none';
+                    inviteCodeInput.value = '';
+                } else {
+                    errorMessage.style.display = 'block';
+                    inviteCodeInput.focus();
+                }*/
+                
+                //如果要使用XML验证，替换上面的if语句为：
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '../invite_codes.xml', true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            try {
+                                const parser = new DOMParser();
+                                const xmlDoc = parser.parseFromString(xhr.responseText, "text/xml");
+                                const validCode = xmlDoc.getElementsByTagName("code")[0].textContent;
+                                
+                                if (enteredCode === validCode) {
+                                    localStorage.setItem('notebookLoggedIn', 'true');
+                                    loginModal.classList.remove('active');
+                                    if(container) container.classList.remove('blur-content');
+                                    errorMessage.style.display = 'none';
+                                    inviteCodeInput.value = '';
+                                } else {
+                                    errorMessage.style.display = 'block';
+                                    inviteCodeInput.focus();
+                                }
+                            } catch(e) {
+                                errorMessage.style.display = 'block';
+                                inviteCodeInput.focus();
+                            }
+                        } else {
+                            errorMessage.style.display = 'block';
+                            inviteCodeInput.focus();
+                        }
+                    }
+                };
+                xhr.send();
+            });
+            // 复制代码功能
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const codeBlock = this.closest('.code-block');
+                    const code = codeBlock.querySelector('pre') ? codeBlock.querySelector('pre').innerText : 
+                                codeBlock.innerText.replace(/复制代码/g, '').trim();
+                    
+                    navigator.clipboard.writeText(code).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = '已复制!';
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                        }, 2000);
+                    });
+                });
+            });
+            
+            // 为目录项添加悬停效果
+            const courseLinks = document.querySelectorAll('.course-list a');
+            courseLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
